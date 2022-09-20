@@ -1,6 +1,8 @@
 package com.kenzie.app;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 public class Main {
@@ -21,49 +23,57 @@ public class Main {
         int points = 0;
         String playAgain = "Y";
         Scanner scan = new Scanner(System.in);
-        int input;
+        String input = " ";
+        boolean testinput = true;
 
 
             System.out.println("What game mode would you like to play? Select a number");
             System.out.println("1. Normal\n" +
                     "2. By Category\n" +
-                    "3. Unlimited\n"
-                    //"4. Versus\n"
+                    "3. Unlimited\n" +
+                    "4. Versus\n"
                     );
-            input = scan.nextInt();
+            input = scan.nextLine();
+            List<String>  inputList = Arrays.asList("1", "2", "3");
+            while(testinput){
+                if(inputList.contains(input)){
+                    testinput = false;
+
+                }else {
+                    System.out.println("Invalid input please try again");
+                    input = scan.nextLine();
+                }
+            }
 
             switch (input) {
-                case 1:
+                case "1":
                     System.out.println("Answer 10 random questions");
                     List<CluesDTO> normList = NormalMode.getList(url);
                     points = NormalMode.normalQuiz(normList);
 
                     totalPoints += points;
                     break;
-                case 2:
+                case "2":
                     System.out.println("Answer questions from the category of your choice");
                     String categoryURL = CategoriesMode.chooseCategory(url);
                     List<CluesDTO> categoryList = CategoriesMode.getList(categoryURL);
                     points = CategoriesMode.CategoryQuiz(categoryList);
                     totalPoints += points;
                     break;
-                case 3:
+                case "3":
                     System.out.println("Answer as many questions as you want");
                     points = UnlimitedMode.unlimitedQuiz(url);
                     totalPoints += points;
                     break;
-                    /*Versus mode is still being worked on*/
-//            case 4:
-//                System.out.println("Play against a friend and see who can get the most out of 10");
-//                List<CluesDTO> versusList = NormalMode.getList(url);
-//                System.out.println("Player 1: It's your turn");
-//                Player1 = RandomQuestions.Quiz(versusList);
-//                System.out.println("Player 2: It's your turn");
-//                Player2 = RandomQuestions.Quiz(versusList);
-//                HighScore.VersusWinner(Player1, Player2);
-//                break;
-            }
+                case "4":
+                    System.out.println("Play against a friend and see who can get the most out of 10");
+                    VersusMode.VersusQuiz(url);
+                    break;
+                }
+
             System.out.println("Your total score is " + totalPoints);
+
+
 
 
     }
