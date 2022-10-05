@@ -1,70 +1,42 @@
 package com.kenzie.app;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 public class HighScore {
-/*Need to finish highscore class*/
+    /*Need to finish highscore class*/
+    static ObjectMapper mapper = new ObjectMapper();
+    static ScoreDTO Highscore = new ScoreDTO();
+    static File scoreFile = new File("HighScores.txt");
+    public static HashMap<String, Integer> readHighScore() {
+        Map<String, Integer> scoreMap = new HashMap<String, Integer>();
 
-public static void readHighScore() {
-    Map<String, String> map = new HashMap<String, String>();
-    BufferedReader br = null;
-    Path filePath = Path.of("HighScores.txt");
-    System.out.println(filePath.toAbsolutePath());
-    String read;
-    try {
-         read = Files.readString(filePath);
-    } catch (IOException e) {
-        throw new RuntimeException(e);
+
+        try {
+            Highscore = mapper.readValue(scoreFile, ScoreDTO.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Highscore.scores;
     }
-    ObjectMapper mapper = new ObjectMapper();
-    \
-    read = read.substring(1, read.length()-1);
-    read = read.replaceAll(",", "");
 
 
 
-//    try {
-//
-//        br = new BufferedReader(new FileReader(path.toFile()));
-//
-//        String line = null;
-//
-//        while ((line = br.readLine()) != null) {
-//            String[] parts = line.split(":");
-//            String name = parts[0].trim();
-//            String number = parts[1].trim();
-//            if (!name.equals("") && !number.equals(""))
-//                map.put(name, number);
-//        }
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//    } finally {
-//
-//        // Always close the BufferedReader
-//        if (br != null) {
-//            try {
-//                br.close();
-//            } catch (Exception e) {
-//            }
-//
-//        }
-//    }
-//    System.out.println();
-}
 
-    public static void checkHighScore(int points){
+    public static void checkHighScore(int points) throws IOException {
+
         Scanner scan = new Scanner(System.in);
-        HashMap<String, Integer> highScore = new LinkedHashMap<>();
+        HashMap<String, Integer> highScore = readHighScore();
         HashMap<String, Integer> tempHighScore = new LinkedHashMap<>();
+        
         String winner = "";
         int count = 0;
 
@@ -89,15 +61,21 @@ public static void readHighScore() {
             }
         }
         highScore = tempHighScore;
+        Highscore.setScores(highScore);
+        //mapper.writeValue(scoreFile, Highscore);
+        System.out.println(highScore);
         updateHighScore(highScore);
+
     }
-    public static void updateHighScore(HashMap<String, Integer> highScore){
+    public static void updateHighScore(HashMap<String, Integer> score) throws IOException {
         Path filePath = Path.of("HighScores.txt");
-        try {
-            Files.writeString(filePath, highScore.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        mapper.writeValue(scoreFile, score);
+
+//        try {
+//            mapper.writeValue(filePath, score);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public static String viewHighScore(){
