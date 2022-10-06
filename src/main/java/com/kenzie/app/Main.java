@@ -30,6 +30,9 @@ public class Main {
         String input = " ";
         boolean testInput = true;
 
+
+        HighScore.checkHighScore(8);
+
             System.out.println("What game mode would you like to play? Select a number");
             System.out.println("1. Normal\n" +
                     "2. By Category\n" +
