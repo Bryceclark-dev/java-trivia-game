@@ -62,7 +62,7 @@ public class CategoriesMode {
             catClueList.add(clueList.clues.get(i).getId());
 
         }
-        System.out.println(catClueList);
+
         if(listSize < 10) {
             System.out.println("There are only " + listSize + " questions in the "+ categoryTitle + " category");
             Collections.shuffle(clueList.clues);

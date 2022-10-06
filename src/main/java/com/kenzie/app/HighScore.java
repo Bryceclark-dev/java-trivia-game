@@ -13,19 +13,21 @@ import java.util.*;
 public class HighScore {
     /*Need to finish highscore class*/
     static ObjectMapper mapper = new ObjectMapper();
-    static ScoreDTO Highscore = new ScoreDTO();
-    static File scoreFile = new File("HighScores.txt");
-    public static HashMap<String, Integer> readHighScore() {
-        Map<String, Integer> scoreMap = new HashMap<String, Integer>();
 
+    static File scoreFile = new File("HighScores.txt");
+    public static LinkedHashMap<String, Integer> readHighScore() {
+        LinkedHashMap<String, Integer> scoreMap;
+        TypeReference<LinkedHashMap<String, Integer>> tyy = new TypeReference<LinkedHashMap<String, Integer>>() {
+        };
 
         try {
-            Highscore = mapper.readValue(scoreFile, ScoreDTO.class);
+            scoreMap = mapper.readValue(scoreFile, tyy);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return Highscore.scores;
+
+        return scoreMap;
     }
 
 
@@ -34,9 +36,9 @@ public class HighScore {
     public static void checkHighScore(int points) throws IOException {
 
         Scanner scan = new Scanner(System.in);
-        HashMap<String, Integer> highScore = readHighScore();
-        HashMap<String, Integer> tempHighScore = new LinkedHashMap<>();
-        
+        LinkedHashMap<String, Integer> highScore = readHighScore();
+        LinkedHashMap<String, Integer> tempHighScore = new LinkedHashMap<>();
+
         String winner = "";
         int count = 0;
 
@@ -61,41 +63,36 @@ public class HighScore {
             }
         }
         highScore = tempHighScore;
-        Highscore.setScores(highScore);
-        //mapper.writeValue(scoreFile, Highscore);
-        System.out.println(highScore);
+
         updateHighScore(highScore);
 
     }
-    public static void updateHighScore(HashMap<String, Integer> score) throws IOException {
-        Path filePath = Path.of("HighScores.txt");
-        mapper.writeValue(scoreFile, score);
-
-//        try {
-//            mapper.writeValue(filePath, score);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+    public static void updateHighScore(LinkedHashMap<String, Integer> score){
+        try {
+            mapper.writeValue(scoreFile, score);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String viewHighScore(){
         Path filePath = Path.of("HighScores.txt");
-        String textH;
+        LinkedHashMap<String, Integer> scoreMap = new LinkedHashMap<>();
+        TypeReference<LinkedHashMap<String, Integer>> type = new TypeReference<LinkedHashMap<String, Integer>>() {
+        };
         try {
-            textH = Files.readString(filePath);
+            scoreMap = mapper.readValue(scoreFile, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        textH = textH.substring(1, textH.length()-1);
-        String[] arr = textH.split(",");
-        StringBuilder ss = new StringBuilder();
-        int count = 1;
-        for(String h : arr){
-            ss.append(count+". ").append(h.trim().replace("=", " - "));
-            ss.append("\n");
-            count++;
+
+        StringBuilder display = new StringBuilder();
+        display.append("HIGH SCORES!!!\n");
+        for(Map.Entry<String, Integer> entry : scoreMap.entrySet()){
+            display.append(entry.getKey()+"\n"+entry.getValue()+"\n");
         }
-        return ss.toString();
+
+        return display.toString();
     }
 
 }
